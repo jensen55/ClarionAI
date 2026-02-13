@@ -1,41 +1,51 @@
-! Implementation of a complete Clarion 11.1 ABC application AI procedure.
+// AI_Procedure Implementation for Clarion 11.1 ABC application
 
-MODULE('AI_Module')
-  IMPORT('abc')
-  MAP
-  END
+PROGRAM
 
-  CLASS('AIClass')
-    DATA
-      STRING(myInput)
-      STRING(myOutput)
-    CODE
-      myOutput = ProcessInput(myInput)
-  END
+    // Include Necessary Libraries
+    MAP
+        INCLUDE('winapi.inc')   // Windows API
+        INCLUDE('json.inc')     // JSON handling
+    END
 
-  PROCEDURE('HandleAI')
-    myInput = 'Sample Input'
-    AIClassInstance = NEW('AIClass')
-    AIClassInstance.myInput = myInput
-    AIClassInstance.Execute()
-    MESSAGE(myOutput, 'AI Output')
-  END
+    // Global Variables
+    STRING(100) httpClient;
+    STRING(100) url = 'https://api.example.com/data';
+    STRING(500) jsonResponse;
 
-  WINDOW('MainWindow')
-    CONTROL('Button', 'Process AI', HandleAI)
-  END
+    // Procedure to make HTTP Client Requests
+    PROCEDURE DoHttpRequest()
+    	httpClient = HTTPClient(); // Initialize HTTP Client
+    	
+        // Set up request
+        httpClient.SetRequestHeader('Content-Type', 'application/json');
+        long responseCode = httpClient.Get(url);
+        
+        IF responseCode = 200 THEN
+            jsonResponse = httpClient.GetResponse();
+            ParseJsonResponse(jsonResponse);
+        ELSE
+            ERROR('HTTP Error: ' + responseCode);
+        END
+    END
 
-  PROCEDURE('InitApp')
-    WINDOW('MainWindow')
-  END
+    // Parse the JSON response
+    PROCEDURE ParseJsonResponse(STRING jsonResponse)
+    	LOCAL jsonObject;
+    	jsonObject = JsonDecode(jsonResponse);
+    	
+    	// Handle parsed data (example)
+    	IF jsonObject.HasKey('result') THEN
+    	    // Do something with jsonObject['result']
+    	    MESSAGE('Result: ' + jsonObject['result']);
+    	ELSE
+    	    ERROR('Invalid JSON Response');
+    	END
+    
+    // Main Window Interface
+    WINDOW;
+        TITLE('AI Procedure Demo');
+        BUTTON('Run Procedure', DoHttpRequest);
+    END
 
-  CODE
-  InitApp()
-
-/! Integration code for AI processing
-FUNCTION('ProcessInput')
-  STRING(input)
-  STRING(result)
-  ! AI processing logic goes here
-  RETURN(result)
-END
+END.
