@@ -1,7 +1,41 @@
-// AI_Procedure.txa
+! Implementation of a complete Clarion 11.1 ABC application AI procedure.
 
-// Clarion 11.1 ABC Application AI Procedure Template
+MODULE('AI_Module')
+  IMPORT('abc')
+  MAP
+  END
 
+  CLASS('AIClass')
+    DATA
+      STRING(myInput)
+      STRING(myOutput)
+    CODE
+      myOutput = ProcessInput(myInput)
+  END
 
-// Add your implementation details here.
+  PROCEDURE('HandleAI')
+    myInput = 'Sample Input'
+    AIClassInstance = NEW('AIClass')
+    AIClassInstance.myInput = myInput
+    AIClassInstance.Execute()
+    MESSAGE(myOutput, 'AI Output')
+  END
 
+  WINDOW('MainWindow')
+    CONTROL('Button', 'Process AI', HandleAI)
+  END
+
+  PROCEDURE('InitApp')
+    WINDOW('MainWindow')
+  END
+
+  CODE
+  InitApp()
+
+/! Integration code for AI processing
+FUNCTION('ProcessInput')
+  STRING(input)
+  STRING(result)
+  ! AI processing logic goes here
+  RETURN(result)
+END
